@@ -22,8 +22,8 @@ export const useAxiosPrivate = () => {
     useEffect(() => {
         const requestInterceptor = axios_private.interceptors.request.use(
             (config) => {
-                if (user && user.token) {
-                    config.headers.Authorization = `Bearer ${user.token}`;
+                if (user && user.access) {
+                    config.headers.Authorization = `Bearer ${user.access}`;
                 }
                 return config;
             },
