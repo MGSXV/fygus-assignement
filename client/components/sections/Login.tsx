@@ -1,3 +1,5 @@
+"use client"
+
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { TabsContent } from "@/components/ui/tabs"
 import { Label } from "@/components/ui/label"
@@ -5,7 +7,7 @@ import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { ReloadIcon } from "@radix-ui/react-icons"
 import { SubmitHandler, useForm } from "react-hook-form"
-import { useRef, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { axios } from "@/config"
 import { IUser } from "@/types"
 import { useAuth } from "@/hooks"
@@ -14,7 +16,7 @@ import Link from "next/link"
 import Image from "next/image"
 import logo_light from "@/assets/logo-light.png"
 
-const LOGIN_ENDPOINT = "/api/auth/login"
+const LOGIN_ENDPOINT = "/api/auth/login/"
 
 const USERNAME_REGEX = /^[A-Za-z0-9]+$/i
 const PASSWORD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[-_#@$%]).+$/
@@ -28,12 +30,13 @@ const Login = ({ toast }: { toast: any }) => {
 
 	const { register, handleSubmit, formState: { errors } } = useForm<ILogin>()
 	const [isLoading, setIsLoading] = useState(false)
+	const [loginResponse, setLoginResponse] = useState<IUser | null>(null);
 	const login_button = useRef<HTMLButtonElement>(null)
 	const { handleSetUser } = useAuth()
 	const router = useRouter()
 	const from = usePathname()
 
-	const login = (data: ILogin) => {
+	const login = async (data: ILogin) => {
 		setIsLoading(true)
 		axios.post(LOGIN_ENDPOINT, {
 			username: data.username,
@@ -42,8 +45,7 @@ const Login = ({ toast }: { toast: any }) => {
 			headers: { 'Content-Type': 'application/json' },
 			withCredentials: true
 		}).then((response) => {
-			handleSetUser(response.data as IUser)
-			router.push(from)
+			setLoginResponse(response.data)
 			toast({
 				title: "success",
 				description: "login successful",
@@ -60,6 +62,13 @@ const Login = ({ toast }: { toast: any }) => {
 			login_button.current?.focus()
 		})
 	}
+
+    useEffect(() => {
+        if (loginResponse) {
+            handleSetUser(loginResponse)
+			// router.push(from)
+        }
+    }, [loginResponse, handleSetUser, router, from]);
 
 	const onSubmit: SubmitHandler<ILogin> = (data) => login(data)
 
@@ -83,7 +92,8 @@ const Login = ({ toast }: { toast: any }) => {
 							</Label>
 							<Input id="username" disabled={isLoading} placeholder="username..."
 								{...register('username', { required: true, minLength: 4, maxLength: 20, pattern: USERNAME_REGEX  })}
-								aria-invalid={errors.username ? true : false } />
+								aria-invalid={errors.username ? true : false }
+								value="testing1" />
 						</div>
 						<div className="space-y-1">
 							<Label htmlFor="password">
@@ -92,7 +102,8 @@ const Login = ({ toast }: { toast: any }) => {
 							</Label>
 							<Input id="password" type="password" disabled={isLoading} placeholder="password..."
 								{...register('password', { required: true, minLength: 8, pattern: PASSWORD_REGEX })}
-								aria-invalid={errors.password ? true : false } />
+								aria-invalid={errors.password ? true : false }
+								value="HelloW0rld@2015" />
 						</div>
 					</CardContent>
 					<CardFooter>

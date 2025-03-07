@@ -11,7 +11,7 @@ import logo_light from "@/assets/logo-light.png"
 import { ReloadIcon } from "@radix-ui/react-icons"
 import { axios } from "@/config"
 
-const SIGNUP_ENDPOINT = "/api/auth/signup"
+const SIGNUP_ENDPOINT = "/api/auth/signup/"
 
 const USERNAME_REGEX = /^[A-Za-z0-9]+$/i
 const PASSWORD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[-_#@$%]).+$/
@@ -26,7 +26,7 @@ interface ISignup {
 
 const Signup = ({ toast }: { toast: any }) => {
 
-	const { register, handleSubmit, formState: { errors } } = useForm<ISignup>()
+	const { register, handleSubmit, formState: { errors }, reset } = useForm<ISignup>()
 	const [isLoading, setIsLoading] = useState(false)
 	const signup_button = useRef<HTMLButtonElement>(null)
 
@@ -35,21 +35,27 @@ const Signup = ({ toast }: { toast: any }) => {
 		axios.post(SIGNUP_ENDPOINT, {
 			username: data.username,
 			password: data.password,
-			firstname: data.firstname,
-			lastname: data.lastname || ''
+			first_name: data.firstname,
+			last_name: data.lastname || ''
 		}, {
 			headers: { 'Content-Type': 'application/json' },
 			withCredentials: true
 		}).then((response) => {
+			reset()
 			toast({
 				title: "success",
 				description: "Your account has been created successfully",
 				variant: "success"
 			})
 		}).catch((error) => {
+			const errormsg = error?.response?.data?.username[0] ||
+				error?.response?.data?.password[0] ||
+				error?.response?.data?.first_name[0] ||
+				error?.response?.data?.last_name[0] ||
+				'An error occurred'
 			toast({
 				title: "Error",
-				description: error?.response?.data?.error || 'An error occurred',
+				description: errormsg,
 				variant: "destructive",
 			})
 		}).finally(() => {
@@ -103,7 +109,7 @@ const Signup = ({ toast }: { toast: any }) => {
 								Password
 								<span className="text-red-700">{` *`}</span>
 							</Label>
-							<Input id="password" disabled={isLoading} placeholder="password..."
+							<Input id="password" disabled={isLoading} type="password" placeholder="password..."
 								{...register('password', { required: true, minLength: 8, maxLength: 20, pattern: PASSWORD_REGEX })}
 								aria-invalid={errors.password ? true : false } />
 						</div>
@@ -112,7 +118,7 @@ const Signup = ({ toast }: { toast: any }) => {
 								Confirm Password
 								<span className="text-red-700">{` *`}</span>
 							</Label>
-							<Input id="confirm_password" disabled={isLoading} placeholder="confirm password..."
+							<Input id="confirm_password" disabled={isLoading} type="password" placeholder="confirm password..."
 								{...register('confirm_password', { required: true, minLength: 8, maxLength: 20, pattern: PASSWORD_REGEX })}
 								aria-invalid={errors.confirm_password ? true : false } />
 						</div>
