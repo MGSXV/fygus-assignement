@@ -1,8 +1,10 @@
 export interface IUser {
-	token: string
+	refresh: string
+	access: string
 	user: {
 		id: number
 		username: string
-		roles: string[]
+		first_name: string
+		last_name: string
 	}
 }
