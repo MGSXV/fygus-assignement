@@ -1,7 +1,7 @@
 "use client"
 
 import { useAuth, useToast } from "@/hooks";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Login from "@/components/sections/Login";
 import Signup from "@/components/sections/Signup";
@@ -15,10 +15,11 @@ export default function Home() {
 	const user = auth?.user || null;
 	const router = useRouter();
 
-	if (user) {
-		router.push("/");
-		return null
-	}
+	useEffect(() => {
+		if (user) {
+			router.push("/chat");
+		}
+	}, [user, router]);
 
 	const tabChange = () => setTab(tab === "login" ? "signup" : "login")
 
