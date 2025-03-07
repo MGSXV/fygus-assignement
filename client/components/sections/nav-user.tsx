@@ -20,7 +20,7 @@ import { IUser } from "@/types"
 import { useAuth } from "@/hooks"
 import { useAxiosPrivate } from "@/config/api"
 
-const LOGOUT_ENDPOINT = '/api/auth/logout'
+const LOGOUT_ENDPOINT = '/api/auth/logout/'
 
 export function NavUser({ user }: {	user: IUser | null }) {
 	const { isMobile } = useSidebar()
@@ -30,13 +30,13 @@ export function NavUser({ user }: {	user: IUser | null }) {
 	const avatar_fallback = `${user?.user?.username.charAt(0)}${user?.user?.username.charAt(1)}`.toUpperCase() || 'U'
 
 	const logout_request = () => {
-
-		axios_private.post(LOGOUT_ENDPOINT, {}, {
+		axios_private.post(LOGOUT_ENDPOINT, {
+			refresh: user?.refresh
+		}, {
 			headers: { 'Content-Type': 'application/json' },
 			withCredentials: true
 		})
 		logout()
-
 	}
 
 	return (
