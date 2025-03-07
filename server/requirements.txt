@@ -7,3 +7,4 @@ daphne
 python-decouple
 requests
 django-environ
+django-cors-headers
