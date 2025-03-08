@@ -8,6 +8,9 @@ from channels.db import database_sync_to_async
 from django.conf import settings
 from .models import ChatContext, Message
 from authentication.models import User
+from dotenv import load_dotenv
+
+load_dotenv()
 
 class ChatConsumer(AsyncWebsocketConsumer):
     async def connect(self):

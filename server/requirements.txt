@@ -10,3 +10,4 @@ django-environ
 django-cors-headers
 daphne
 channels
+python-dotenv
