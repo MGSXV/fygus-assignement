@@ -12,8 +12,11 @@ export function useCopyToClipboard({
 }: UseCopyToClipboardProps) {
   const [isCopied, setIsCopied] = useState(false)
   const timeoutRef = useRef<NodeJS.Timeout | null>(null)
-
   const handleCopy = useCallback(() => {
+	if (!navigator.clipboard) {
+		toast.error("Clipboard API not supported.")
+		return
+	}
     navigator.clipboard
       .writeText(text)
       .then(() => {
