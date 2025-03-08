@@ -1,6 +1,6 @@
 export interface IChatContext {
 	id: string
-	name: string
+	title: string
 	created_at: string
 	updated_at: string
 }
