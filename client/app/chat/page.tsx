@@ -41,7 +41,8 @@ export default function Chat() {
 						</div>
 					</header>
 					<div className="flex flex-1 flex-col gap-4 p-4">
-						<Chat />
+						{/* <Chat /> */}
+						<div>zbi</div>
 					</div>
 				</SidebarInset>
 			</SidebarProvider>
