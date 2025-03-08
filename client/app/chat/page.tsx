@@ -12,6 +12,8 @@ import { useAuth } from "@/hooks";
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { ChatContextProvider } from "@/context";
+import { ChatInterface } from "@/components/sections/chat";
+import { ConversationProvider } from "@/context";
 
 export default function Chat() {
 
@@ -28,24 +30,25 @@ export default function Chat() {
 
 	return (
 		<ChatContextProvider>
-			<SidebarProvider>
-				<AppSidebar />
-				<SidebarInset>
-					<header className="flex h-16 justify-between shrink-0 items-center gap-2 border-b">
-						<div className="flex items-center gap-2 px-3">
-							<SidebarTrigger className="cursor-pointer" />
-							<AddChat className="cursor-pointer" />
+			<ConversationProvider>
+				<SidebarProvider>
+					<AppSidebar />
+					<SidebarInset>
+						<header className="flex h-16 justify-between shrink-0 items-center gap-2 border-b">
+							<div className="flex items-center gap-2 px-3">
+								<SidebarTrigger className="cursor-pointer" />
+								<AddChat className="cursor-pointer" />
+							</div>
+							<div className="flex items-center gap-2 px-3">
+								<ModeToggle />
+							</div>
+						</header>
+						<div className="flex flex-1 flex-col gap-4 p-4">
+							<ChatInterface chat_id="new" />
 						</div>
-						<div className="flex items-center gap-2 px-3">
-							<ModeToggle />
-						</div>
-					</header>
-					<div className="flex flex-1 flex-col gap-4 p-4">
-						{/* <Chat /> */}
-						<div>zbi</div>
-					</div>
-				</SidebarInset>
-			</SidebarProvider>
+					</SidebarInset>
+				</SidebarProvider>
+			</ConversationProvider>
 		</ChatContextProvider>
 	)
 }
