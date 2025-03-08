@@ -1,5 +1,5 @@
 import { IConversation, TConversation } from "@/types";
-import { createContext, ReactNode, useContext } from "react";
+import { createContext, ReactNode, useContext, useState } from "react";
 
 const ChatsContext = createContext<TConversation>({
 	conversation: undefined,
@@ -8,8 +8,10 @@ const ChatsContext = createContext<TConversation>({
 
 export const ConversationProvider = ({ children }: { children: ReactNode }) => {
 
+	const [conversation, setConversation] = useState<IConversation | undefined>(undefined)
+
 	return (
-		<ChatsContext.Provider value={{ conversation: undefined, setConversation: () => { } }}>
+		<ChatsContext.Provider value={{ conversation, setConversation }}>
 			{children}
 		</ChatsContext.Provider>
 	)
