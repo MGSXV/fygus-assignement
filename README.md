@@ -8,7 +8,7 @@ backend
 - run env activete
 - intial migration
 - migration
-- runserver
+- runserver (python chatbot/manage.py runserver)
 frontend
 - run `npm run dev`
 
