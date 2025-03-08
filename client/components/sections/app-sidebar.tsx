@@ -18,6 +18,9 @@ import logo_light from "@/assets/logo-light.png"
 import Link from "next/link"
 import { useAuth } from "@/hooks"
 import { NavUser } from "./nav-user"
+import { useAxiosPrivate } from "@/config"
+import { useEffect } from "react"
+import { useChatContext } from "@/context"
 
 // This is sample data.
 const data = {
@@ -48,6 +51,25 @@ const data = {
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 
 	const { user } = useAuth()
+	const axios_private = useAxiosPrivate()
+	const { contexts, setContexts } = useChatContext()
+
+	const get_chat_context = async () => {
+		axios_private.get("api/chat/contexts/").then((res) => {
+			setContexts([...res.data])
+			console.log(res.data)
+		}).catch((err) => {
+			
+		}).then(() => {
+			// always executed
+		})
+	}
+
+	useEffect(() => {
+		if (user) {
+			get_chat_context()
+		}
+	}, [user])
 
 	return (
 		<Sidebar {...props}>
@@ -65,11 +87,16 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 			<SidebarContent>
 				<SidebarGroup>
 					<SidebarMenu>
-						{data.navMain.map((item) => (
-							<SidebarMenuItem key={item.title}>
+						{
+							contexts.length <= 0 && (
+								<span className="text-muted">No chat yet...</span>
+							)
+						}
+						{contexts.map((item) => (
+							<SidebarMenuItem key={item.name}>
 								<SidebarMenuButton asChild>
-									<a href={item.url} className="font-medium">
-										{item.title}
+									<a href={item.id} className="font-medium">
+										{item.name}
 									</a>
 								</SidebarMenuButton>
 							</SidebarMenuItem>

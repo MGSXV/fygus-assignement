@@ -8,25 +8,43 @@ import {
 	SidebarTrigger,
 } from "@/components/ui/sidebar"
 import { ModeToggle } from "@/components/mode-toggle";
+import { useAuth } from "@/hooks";
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { ChatContextProvider } from "@/context";
 
 export default function Chat() {
+
+	const auth = useAuth();
+	const user = auth?.user || null;
+	const router = useRouter();
+
+	useEffect(() => {
+		if (!user) {
+			router.push("/");
+		}
+
+	}, [user, router]);
+
 	return (
-		<SidebarProvider>
-			<AppSidebar />
-			<SidebarInset>
-				<header className="flex h-16 justify-between shrink-0 items-center gap-2 border-b">
-					<div className="flex items-center gap-2 px-3">
-						<SidebarTrigger className="cursor-pointer" />
-						<AddChat className="cursor-pointer" />
+		<ChatContextProvider>
+			<SidebarProvider>
+				<AppSidebar />
+				<SidebarInset>
+					<header className="flex h-16 justify-between shrink-0 items-center gap-2 border-b">
+						<div className="flex items-center gap-2 px-3">
+							<SidebarTrigger className="cursor-pointer" />
+							<AddChat className="cursor-pointer" />
+						</div>
+						<div className="flex items-center gap-2 px-3">
+							<ModeToggle />
+						</div>
+					</header>
+					<div className="flex flex-1 flex-col gap-4 p-4">
+						<Chat />
 					</div>
-					<div className="flex items-center gap-2 px-3">
-						<ModeToggle />
-					</div>
-				</header>
-				<div className="flex flex-1 flex-col gap-4 p-4">
-					<div className="bg-muted/50 min-h-[100vh] flex-1 rounded-xl md:min-h-min" />
-				</div>
-			</SidebarInset>
-		</SidebarProvider>
+				</SidebarInset>
+			</SidebarProvider>
+		</ChatContextProvider>
 	)
 }
