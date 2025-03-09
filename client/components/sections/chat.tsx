@@ -27,6 +27,7 @@ export function ChatInterface(props: ChatProps) {
 		setInput,
 	} = useChat({ initialMessages: props.initialMessages })
 	const auth = useAuth()
+	const { logout } = useAuth()
 	const user = auth?.user || null
 	const chatService = useRef<ChatService | null>(null)
 	const { contexts, setContexts } = useChatContext()
@@ -64,6 +65,7 @@ export function ChatInterface(props: ChatProps) {
 	}, [user, props.chat_id, append])
 
 	useEffect(() => {
+		console.log("Conversation changed:", conversation)
 		if (conversation) {
 			if (conversation.id === 'new') {
                 if (chatService.current) {
@@ -73,22 +75,28 @@ export function ChatInterface(props: ChatProps) {
                 if (chatService.current) {
                     chatService.current.connectToChat(conversation.id)
                 }
+				setMessages([])
+				setInput('')
+				axios_private.get(`api/chat/contexts/${conversation.id}/`).then((res) => {
+					const messages = res.data.messages
+					setMessages(messages)
+				}).catch((err) => {
+					if (err.status === 401) {
+						logout()
+					}
+				})
             }
-			setMessages([])
-			setInput('')
-			axios_private.get(`api/chat/contexts/${conversation.id}/`).then((res) => {
-				const messages = res.data.messages
-				setMessages(messages)
-			}).catch((err) => {
-				console.error(err)
-			})
+		} else {
+			if (chatService.current) {
+				chatService.current.createNewChat()
+			}
 		}
 	}, [conversation])
 
 	const handleSubmit = (event?: { preventDefault?: () => void }) => {
 		event?.preventDefault?.()
 		if (!input || !chatService.current) return
-		
+		aiHandleSubmit()
 		chatService.current.sendMessage(input)
 		setInput('')
 		if (conversation?.id === 'new') {
@@ -105,23 +113,21 @@ export function ChatInterface(props: ChatProps) {
 	}
  
 	return (
-		<div className="flex h-full max-h-[500px] w-full">
-			<Chat
-				className="grow"
-				messages={messages}
-				handleSubmit={handleSubmit}
-				input={input}
-				handleInputChange={handleInputChange}
-				isGenerating={isLoading}
-				stop={stop}
-				append={append}
-				setMessages={setMessages}
-				suggestions={[
-					"Generate a tasty vegan lasagna recipe for 3 people.",
-					"Generate a list of 5 questions for a job interview for a software engineer.",
-					"Who won the 2024 FIFA World Cup?",
-				]}
-			/>
+		<div className="flex h-full w-full items-center justify-center">
+			<div className="flex h-full max-h-[500px] w-full">
+				<Chat
+					className="grow"
+					messages={messages}
+					handleSubmit={handleSubmit}
+					input={input}
+					handleInputChange={handleInputChange}
+					isGenerating={isLoading}
+					stop={stop}
+					append={append}
+					setMessages={setMessages}
+					suggestions={[]}
+				/>
+			</div>
 		</div>
 	)
 }

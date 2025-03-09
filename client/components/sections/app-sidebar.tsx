@@ -25,7 +25,7 @@
 
 	export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 
-		const { user } = useAuth()
+		const { user, logout } = useAuth()
 		const axios_private = useAxiosPrivate()
 		const { contexts, setContexts } = useChatContext()
 		const { setConversation } = useConversation()
@@ -36,7 +36,11 @@
 					return new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime()
 				})
 				setContexts([...sorted])
-			}).catch((err) => { })
+			}).catch((err) => {
+				if (err.status === 401) {
+					logout()
+				}
+			})
 		}
 
 		const handle_click = (item: IChatContext) => {
