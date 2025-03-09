@@ -26,8 +26,8 @@ This project is an AI-driven chatbot application built using **Next.js** for the
 ## Setup Instructions
 
 ### Prerequisites
-- **Node.js** and **npm** installed for the frontend.
-- **Python** and **pip** installed for the backend.
+- **Node.js** and **npm** installed for the frontend *preferably v22.14.0*.
+- **Python** and **pip** installed for the backend *preferably Python 3.13.2* .
 - **PostgreSQL** database (managed by Aiven in this case).
 - **DeepSeek API Key** (or any other AI API key).
 
@@ -42,6 +42,7 @@ cd ./server
 ```
 1. **Activate the virtual environment**:
    ```bash
+   python -m venv venv
    source venv/bin/activate  # On macOS/Linux
    venv\Scripts\activate     # On Windows
    ```
@@ -50,6 +51,7 @@ cd ./server
 	pip install -r requirements.txt
 	```
 3. **Run migrations**
+	* This step is only neccissary in case of use new database
 	```bash
 	python chatbot/manage.py makemigrations
 	python chatbot/manage.py migrate
