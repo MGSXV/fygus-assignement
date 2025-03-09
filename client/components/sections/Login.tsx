@@ -66,7 +66,7 @@ const Login = ({ toast }: { toast: any }) => {
     useEffect(() => {
         if (loginResponse) {
             handleSetUser(loginResponse)
-			// router.push(from)
+			router.push(from)
         }
     }, [loginResponse, handleSetUser, router, from]);
 
