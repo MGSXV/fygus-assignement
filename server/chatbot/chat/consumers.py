@@ -255,31 +255,28 @@ class ChatConsumer(AsyncWebsocketConsumer):
             api_key = os.environ.get('DEEPSEEK_API_KEY', '')
             if not api_key:
                 return "API key not found. Please set the DEEPSEEK_API_KEY environment variable."
-                
             url = "https://api.deepseek.com/v1/chat/completions"
-            
-            # Prepare the payload
             payload = {
                 "model": "deepseek-chat",
                 "messages": messages,
                 "temperature": 0.7
             }
-            
             headers = {
                 "Content-Type": "application/json",
                 "Authorization": f"Bearer {api_key}"
             }
-            
-            # Using run_in_executor to make a synchronous request in async context
             loop = asyncio.get_event_loop()
             response = await loop.run_in_executor(
                 None,
                 lambda: requests.post(url, json=payload, headers=headers)
             )
-            
             if response.status_code == 200:
-                response_data = response.json()
-                return response_data["choices"][0]["message"]["content"]
+                try:
+                    response_data = response.json()
+                    content = response_data["choices"][0]["message"]["content"]
+                    return content
+                except Exception as e:
+                    return f"Error parsing API response: {str(e)}"
             else:
                 return f"Error from API: {response.status_code} - {response.text}"
                 
