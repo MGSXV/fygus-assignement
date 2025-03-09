@@ -47,7 +47,6 @@ export class ChatService {
 	// Send a message
 	sendMessage(message: any) {
 		if (this.socket && this.socket.readyState === WebSocket.OPEN) {
-			console.log('---------->Sending message:', message);
 		this.socket.send(JSON.stringify({
 			type: 'message',
 			message: message

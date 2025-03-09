@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Login from "@/components/sections/Login";
 import Signup from "@/components/sections/Signup";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 
 export default function Home() {
 
@@ -14,9 +14,9 @@ export default function Home() {
 	const auth = useAuth();
 	const user = auth?.user || null;
 	const router = useRouter();
-
+	const pathname = usePathname();
 	useEffect(() => {
-		if (user) {
+		if (user && pathname !== "/chat") {
 			router.push("/chat");
 		}
 	}, [user, router]);

@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/sidebar"
 import { ModeToggle } from "@/components/mode-toggle";
 import { useAuth } from "@/hooks";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { ChatContextProvider } from "@/context";
 import { ChatInterface } from "@/components/sections/chat";
@@ -20,13 +20,17 @@ export default function Chat() {
 	const auth = useAuth();
 	const user = auth?.user || null;
 	const router = useRouter();
+	const [isLoading, setIsLoading] = useState(true);
 
 	useEffect(() => {
-		if (!user) {
+		if (!user && !isLoading) {
 			router.push("/");
 		}
-
+		setIsLoading(false);
 	}, [user, router]);
+
+	if (isLoading)
+		return (<p>Loading...</p>)
 
 	return (
 		<ChatContextProvider>

@@ -42,18 +42,33 @@ export function ChatInterface(props: ChatProps) {
 		service.onOpen(() => console.log("Connected to WebSocket"))
 		service.onMessage((data: any) => {
 			if (data.type === 'message') {
-				append({
-					id: data.message_id,
-					content: data.message,
-					role: data.role
+				setMessages((prevMessages) => {
+					const messageExists = prevMessages.some(
+						(msg) => typeof msg.id === "string" && msg.id.startsWith("temp-") && msg.content === data.message
+					)
+		
+					if (messageExists) {
+						return prevMessages.map((msg) =>
+							typeof msg.id === "string" && msg.id.startsWith("temp-") && msg.content === data.message
+								? { ...msg, id: data.message_id } // Update ID
+								: msg
+						)
+					} else {
+						return [...prevMessages, {
+							id: data.message_id,
+							content: data.message,
+							role: data.role,
+						}]
+					}
 				})
 			}
 		})
+	
 		service.onChatCreated((data: any) => {
-			console.log("Chat created:", data)
+			console.log("Chat created:")
 		})
 		service.onError((error: any) => {
-			console.error("WebSocket error:", error)
+			console.error("WebSocket error")
 		})
 		service.onClose((event: any) => {
 			console.log("Connection closed:", event)
@@ -65,11 +80,12 @@ export function ChatInterface(props: ChatProps) {
 	}, [user, props.chat_id, append])
 
 	useEffect(() => {
-		console.log("Conversation changed:", conversation)
 		if (conversation) {
 			if (conversation.id === 'new') {
                 if (chatService.current) {
                     chatService.current.createNewChat()
+					setMessages([])
+					setInput('')
                 }
             } else {
                 if (chatService.current) {
@@ -89,6 +105,8 @@ export function ChatInterface(props: ChatProps) {
 		} else {
 			if (chatService.current) {
 				chatService.current.createNewChat()
+				setMessages([])
+				setInput('')
 			}
 		}
 	}, [conversation])
@@ -96,12 +114,18 @@ export function ChatInterface(props: ChatProps) {
 	const handleSubmit = (event?: { preventDefault?: () => void }) => {
 		event?.preventDefault?.()
 		if (!input || !chatService.current) return
-		aiHandleSubmit()
+		const tempId = `temp-${Date.now()}`
+		append({
+			id: tempId,
+			content: input,
+			role: EChatRole.USER,
+		})
+		// aiHandleSubmit()
 		chatService.current.sendMessage(input)
 		setInput('')
 		if (conversation?.id === 'new') {
 			const cs = [...contexts, {
-				id: conversation?.id || 'new',
+				id: tempId,
 				title: "New Chat",
 				created_at: new Date().toISOString(),
 				updated_at: new Date().toISOString(),
