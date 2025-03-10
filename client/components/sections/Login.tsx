@@ -70,6 +70,12 @@ const Login = ({ toast }: { toast: any }) => {
         }
     }, [loginResponse, handleSetUser, router, from]);
 
+	const { user } = useAuth()
+	useEffect(() => {
+		if (user)
+			router.push('/chat')
+	}, [user])
+
 	const onSubmit: SubmitHandler<ILogin> = (data) => login(data)
 
 	return (

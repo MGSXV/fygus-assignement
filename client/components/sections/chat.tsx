@@ -68,7 +68,7 @@ export function ChatInterface(props: ChatProps) {
 			console.log("Chat created:")
 		})
 		service.onError((error: any) => {
-			console.error("WebSocket error")
+			// console.error("WebSocket error")
 		})
 		service.onClose((event: any) => {
 			console.log("Connection closed:", event)
@@ -123,7 +123,7 @@ export function ChatInterface(props: ChatProps) {
 		// aiHandleSubmit()
 		chatService.current.sendMessage(input)
 		setInput('')
-		if (conversation?.id === 'new') {
+		if (!conversation || conversation.id === 'new') {
 			const cs = [...contexts, {
 				id: tempId,
 				title: "New Chat",
